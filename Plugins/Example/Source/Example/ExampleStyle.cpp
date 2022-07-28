@@ -35,9 +35,9 @@ FExampleStyle::FExampleStyle()
 	
 	// 아이콘 등록(폴더로부터)  (아이콘 이름[식별자], 경로 "/"에 파일명 더함, 사이즈, 할당 할 곳)
 	//"aaa"/"bbb" => "aaa/bbb"
-	RegisterIcon("ToolBar_Icon", path / "T_Radial_Local_Space.png", FVector2D(48, 48), ToolBar_Icon);
-	//RegisterIcon("ToolBar_Icon2", path / L"icon_MatEd_Home_40x.png", FVector2D(48, 48), ToolBar_Icon2);
-	//RegisterIcon("MenuItem_Icon", path / L"T_Radial_Local_Space.png", FVector2D(16, 16), MenuItem_Icon);
+	RegisterIcon("ToolBar_Icon", path / TEXT("T_Radial_Local_Space.png"), FVector2D(48, 48), ToolBar_Icon);
+	RegisterIcon("ToolBar_Icon2", path / TEXT("icon_MatEd_Home_40x.png"), FVector2D(48, 48), ToolBar_Icon2);
+	RegisterIcon("MenuItem_Icon", path / TEXT("T_Radial_Local_Space.png"), FVector2D(16, 16), MenuItem_Icon);
 
 
 

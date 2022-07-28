@@ -2,9 +2,12 @@
 
 
 #include "ExampleDebuggerCategory.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
 
 FExampleDebuggerCategory::FExampleDebuggerCategory()
 {
+	bShowOnlyWithDebugActor = false; //디버그 엑터만 보려면 false;
 }
 
 FExampleDebuggerCategory::~FExampleDebuggerCategory()
@@ -19,24 +22,35 @@ TSharedRef<FGameplayDebuggerCategory> FExampleDebuggerCategory::MakeInstance()
 
 void FExampleDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugActor)
 {
-	//FGameplayDebuggerCategory::CollectData(OwnerPC, DebugActor);
+	//APlayerController 해당 플레이어의 캔버스에 디버그가 출력되므로 항상 사용하는 카메라의 플레이어 컨트롤러로 온다
+	//DebugActor 캔버스에서 선택한 Actor
 
-	//if (!!DebugActor)
-	//{
-	//	Data.Location = DebugActor->GetActorLocation();
-	//	Data.Rotation = DebugActor->GetActorRotation();
-	//	Data.Forward = DebugActor->GetActorForwardVector();
-	//}
+	FGameplayDebuggerCategory::CollectData(OwnerPC, DebugActor);
+	//부모에정의된 함수 콜
+	if (!!DebugActor)//선택한 액터가 유효하면 정보 수집
+	{
+		DebugData.Location = DebugActor->GetActorLocation();
+		DebugData.Rotation = DebugActor->GetActorRotation();
+		DebugData.Forward = DebugActor->GetActorForwardVector();
+	}
 }
 
 void FExampleDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext)
 {
-	//FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
+	//디버그용 캔버스를 하나 더 올림 캔버스란? DX에서 OM에서 합쳐질 2D View
+	//CollectData 에서 수집한 정보 출력
 
-	//CanvasContext.Printf(FColor(255, 0, 0), L"Location : %s", *Data.Location.ToString());
-	//CanvasContext.Printf(FColor(0, 255, 0), L"Rotation : %s", *Data.Rotation.ToString());
-	//CanvasContext.Printf(FColor(0, 0, 255), L"Forward : %s", *Data.Forward.ToString());
+	FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
+	//부모에 정의된 함수 콜
 
-	//ACharacter* character = OwnerPC->GetPawn<ACharacter>();
-	//CanvasContext.Printf(FColor(255, 0, 255), L"Character : %s", *character->GetActorLocation().ToString());
-}
+
+	ACharacter* character = OwnerPC->GetPawn<ACharacter>();
+	//플레이어 캐릭터를 가져옴
+	CanvasContext.Printf(FColor::Yellow, TEXT("Character : %s"), *character->GetActorLocation().ToString());
+
+
+	CanvasContext.Printf(FColor::Red, TEXT("Location : %s"), *DebugData.Location.ToString());
+	CanvasContext.Printf(FColor::Green, TEXT("Rotation : %s"), *DebugData.Rotation.ToString());
+	CanvasContext.Printf(FColor::Blue, TEXT("Forward : %s"), *DebugData.Forward.ToString());
+
+}//FColor::Magenta	

@@ -26,6 +26,10 @@ public:
 	static TSharedRef<FGameplayDebuggerCategory> MakeInstance();
 
 	virtual void CollectData(APlayerController* OwnerPC, AActor* DebugActor) override;
+	//데이터를 모아주는 역할 정의
 	virtual void DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext) override;
+	//데이터를 그리는 역할 정의
 
+private:
+	FExampleDebuggerCategoryData DebugData;
 };

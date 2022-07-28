@@ -31,7 +31,9 @@ private:
 	TSharedPtr<class FSlateStyleSet> StyleSet;
 
 public:
+	//로드할 아이콘
 	FSlateIcon ToolBar_Icon;
-
+	FSlateIcon ToolBar_Icon2;
+	FSlateIcon MenuItem_Icon;
 
 };

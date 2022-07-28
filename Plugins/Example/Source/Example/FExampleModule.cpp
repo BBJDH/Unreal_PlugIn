@@ -35,6 +35,16 @@ void FExampleModule::StartupModule()
 	//모듈이 시작할때 실행
 
 
+	/*
+	툴바, 메뉴, 버튼 추가방법
+	플러그인 로드시 발생할 이벤트에 대한 델리게이션에 넣을 함수(F객체Builder 를통해 서술)작성
+	함수를 바인딩할 델리게이션 생성 위의 함수를 바인딩
+	해당 UI에 대한 이벤트 발생시 동작할 함수 작성(FUICommandInfo, FUICommandList)
+	Extender(FExtender) 를 통해 위의 내용들을 확장등록
+	FLevelEditorModule를 통해 등록
+	
+	*/
+
 	//ToolBar
 	{
 		Extender = MakeShareable(new FExtender());
@@ -63,10 +73,26 @@ void FExampleModule::StartupModule()
 		//싱글톤 접근
 
 
+
+		//메뉴추가 델리게이트 생성
+		FMenuExtensionDelegate menu = FMenuExtensionDelegate::CreateRaw
+		(
+			this,
+			&FExampleModule::AddMenuItem
+		);
+		Extender->AddMenuExtension		//메뉴 추가 함수
+		(
+			"LevelEditor",						//Compile 구역
+			EExtensionHook::Before,			//컴파일 섹션 앞에 삽입(뒤 또는 섹션시작부분 지정가능)
+			FButtonCommand::Get().Command,	// 버튼정보 불러옴(TCommands.Get는 내포하고있는 Weak포인터를 Shared포인터로 Pin()을 통해 캐스팅해서 반환
+			menu							//실행할 델리게이션 바인딩
+		);
+
 		//확장을 등록하기위할 타겟인 레벨 에디터 모듈을 불러온다,LoadModuleChecked<FLevelEditorModule>
 		//FLevelEditorModule의 레퍼런스로 반환(모듈네임으로 읽어옴)
 		FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
-		levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+		levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);	//여기서 영역(보여지는 공간) 생성
+		levelEditor.GetMenuExtensibilityManager()->AddExtender(Extender);;	//여기서 영역(보여지는 공간) 생성
 		//GetToolBarExtensibilityManager()레벨에디터에서 툴바를 반환, AddExtender() 통해 확장 등록
 
 	}
@@ -77,13 +103,16 @@ void FExampleModule::StartupModule()
 
 		//gameplayDebugger.Get().RegisterCategory("Example", );
 		IGameplayDebugger& gameplayDebugger = IGameplayDebugger::Get();
-		//싱글턴 생성
+		//싱글턴 생성 레퍼런스 반환
 		
 		IGameplayDebugger::FOnGetCategory category = IGameplayDebugger::FOnGetCategory::CreateStatic(&FExampleDebuggerCategory::MakeInstance);
+		//CreateStatic() 는 생성을해서 연결까지 시켜준다 category델리게이트에 해당함수가 생성 및 할당되는것
+		//TDelegate<리턴자료형>(파라미터)로도 사용 가능 변수명 안써도 되는 델리게이트
 		//델리게이트 생성, 모듈 실행시 gameplayDebugger의 등록 함수 호출이 될때 실행될 함수 바인딩될 델리게이트
+		//생성에 관여할 델리게이트, 이벤트 발생시 해당 인스턴스 생성
 		gameplayDebugger.Get().RegisterCategory
 		(
-			"Example",													//디버그 카테고리 이름
+			"Example",													//디버그 카테고리 이름(` 눌렀을때 나올 카테고리이름)
 			category,													//파라미터가 없는 델리게이트(TSharedRef 반환)
 			EGameplayDebuggerCategoryState::EnabledInGameAndSimulate	//게임모드, 시뮬레이션모드, 둘다 보여줄지 여부
 		);
@@ -113,6 +142,7 @@ void FExampleModule::AddToolBar(FToolBarBuilder & InBuilder)
 	//툴바 모양이 어떻게 정의 될지를 여기에 정의
 	InBuilder.AddSeparator();
 	//파티션 추가
+
 	InBuilder.AddToolBarButton
 	(
 		FButtonCommand::Get().Id,
@@ -132,7 +162,21 @@ void FExampleModule::AddToolBar2(FToolBarBuilder & InBuilder)
 
 void FExampleModule::AddMenuItem(FMenuBuilder& InBuilder)
 {
+	//FMenuBuilder : 메뉴 생성(모양에 관한것)
+//levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+//플러그인 등록시 실행될 함수(버튼 그려질 정보 세팅)
+	InBuilder.AddSeparator();
+	//파티션 추가
 
+	InBuilder.AddMenuEntry
+	(
+		FButtonCommand::Get().Id,
+		NAME_None,
+		FText::FromString("Load Mesh"),			//에디터에 나타날 버튼이름
+		FText::FromString("Load Mesh Data"),	//툴팁
+		//TAttribute<FSlateIcon>()				//아이콘 디폴트
+		FExampleStyle::Get()->MenuItem_Icon		//아이콘 우리가 만든거
+	);
 }
 
 
