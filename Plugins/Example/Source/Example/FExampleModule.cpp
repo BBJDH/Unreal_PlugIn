@@ -3,6 +3,8 @@
 #include "ExampleStyle.h"
 #include "Commands/ButtonCommand.h"
 #include "ExampleDebuggerCategory.h"
+#include "StaticMesh_Detail.h"
+#include "CStaticMesh.h"
 
 
 #include "LevelEditor.h"
@@ -120,6 +122,20 @@ void FExampleModule::StartupModule()
 		//카테고리가 바뀌었음을 알림
 
 	}
+
+
+	//Detail Pannel
+	{
+		FPropertyEditorModule& prop = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		prop.RegisterCustomClassLayout
+		(
+			ACStaticMesh::StaticClass()->GetFName(),
+			FOnGetDetailCustomizationInstance::CreateStatic(&FStaticMesh_Detail::MakeInstance)
+		);
+
+
+	}
+
 }
 
 void FExampleModule::ShutdownModule()

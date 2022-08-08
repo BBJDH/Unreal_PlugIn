@@ -12,8 +12,9 @@ public class Example : ModuleRules
         //내부적으로 쓴다면 Private public은 전파된다
 
 
-
         PublicDependencyModuleNames.Add("Core");
+        PublicDependencyModuleNames.Add("CPP_PlugIn");
+        //순환참조에 주의하자!! 게임 플러그인 플러그인 게임
 
         PrivateDependencyModuleNames.Add("CoreUObject");
         PrivateDependencyModuleNames.Add("Engine");

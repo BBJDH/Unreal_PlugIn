@@ -26,8 +26,10 @@ FExampleStyle::FExampleStyle()
 	StyleSet = MakeShareable(new FSlateStyleSet(StyleSetName));
 	//쉐어드 포인터의 생성자는 퍼블릭이어야 한다
 
-	FString path = IPluginManager::Get().FindPlugin("Example")->GetContentDir();
+	FString path = IPluginManager::Get().FindPlugin("Example")->GetBaseDir();
 	//플러그인(모듈네임)을 찾아 해당 컨텐츠 폴더 경로를 반환(GetContentDir)
+	// % 변경 Resource 폴더로
+	path = path / "Resources";
 	//GLog->Log(*path);
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *path);
 	StyleSet->SetContentRoot(path);

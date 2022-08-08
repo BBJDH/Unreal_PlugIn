@@ -7,8 +7,8 @@
 
 struct FExampleDebuggerCategoryData
 {
+	FString Name;
 	FVector Location;
-	FRotator Rotation;
 	FVector Forward;
 };
 
@@ -31,5 +31,7 @@ public:
 	//데이터를 그리는 역할 정의
 
 private:
-	FExampleDebuggerCategoryData DebugData;
+	FExampleDebuggerCategoryData PlayerPawnData;
+	FExampleDebuggerCategoryData ForwardActorData;
+	FExampleDebuggerCategoryData SelectedActorData;
 };

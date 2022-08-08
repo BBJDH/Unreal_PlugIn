@@ -16,6 +16,7 @@ public class CPP_PlugIn : ModuleRules
         PublicDependencyModuleNames.Add("Engine");
         PublicDependencyModuleNames.Add("InputCore");
         PublicDependencyModuleNames.Add("AIModule");
+        PublicDependencyModuleNames.Add("ProceduralMeshComponent");
 
 	}
 }

@@ -2,16 +2,18 @@
 
 
 #include "ExampleDebuggerCategory.h"
+#include "CanvasItem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 
 FExampleDebuggerCategory::FExampleDebuggerCategory()
 {
-	bShowOnlyWithDebugActor = false; //디버그 엑터만 보려면 false;
+	bShowOnlyWithDebugActor = false; //디버그 엑터만 출력값을 보려면 true;
 }
 
 FExampleDebuggerCategory::~FExampleDebuggerCategory()
 {
+	
 }
 
 TSharedRef<FGameplayDebuggerCategory> FExampleDebuggerCategory::MakeInstance()
@@ -27,12 +29,67 @@ void FExampleDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* D
 
 	FGameplayDebuggerCategory::CollectData(OwnerPC, DebugActor);
 	//부모에정의된 함수 콜
-	if (!!DebugActor)//선택한 액터가 유효하면 정보 수집
+	//if (DebugActor==nullptr)return;//선택한 액터가 유효하면 정보 수집
+
+	ACharacter* player = OwnerPC->GetPawn<ACharacter>();
+	//Character
 	{
-		DebugData.Location = DebugActor->GetActorLocation();
-		DebugData.Rotation = DebugActor->GetActorRotation();
-		DebugData.Forward = DebugActor->GetActorForwardVector();
+		PlayerPawnData.Name = player->GetName();
+		PlayerPawnData.Location = player->GetActorLocation();
+		PlayerPawnData.Forward = player->GetActorForwardVector();
+
 	}
+
+	//Forward
+	{
+
+		FHitResult hitResult;
+
+		FVector start = player->GetActorLocation();
+		FVector end = start + player->GetActorForwardVector() * 1e+4f; // 10000 만큼 전방으로 LineTrace
+
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(player);
+		//FCollisionQueryParams: LineTrace에 관한 추가정보를 적을 자료형
+
+
+		player->GetWorld()->LineTraceSingleByChannel
+		(
+			hitResult,
+			start,
+			end,
+			ECollisionChannel::ECC_Visibility,
+			params
+		);
+
+		if (hitResult.bBlockingHit)
+		{
+			ForwardActorData.Name = hitResult.GetActor()->GetName();
+			ForwardActorData.Location = hitResult.GetActor()->GetActorLocation();
+			ForwardActorData.Forward = hitResult.GetActor()->GetActorForwardVector();
+		}
+		else
+		{
+			ForwardActorData.Name = "";
+			ForwardActorData.Location = FVector::ZeroVector;
+			ForwardActorData.Forward = FVector::ZeroVector;
+		}
+
+	}
+	if (!!DebugActor)
+	{
+		SelectedActorData.Name = DebugActor->GetName();
+		SelectedActorData.Location = DebugActor->GetActorLocation();
+		SelectedActorData.Forward = DebugActor->GetActorForwardVector();
+	}
+	else
+	{
+		SelectedActorData.Name = "";
+		SelectedActorData.Location = FVector::ZeroVector;
+		SelectedActorData.Forward = FVector::ZeroVector;
+	}
+
+
 }
 
 void FExampleDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext)
@@ -43,14 +100,23 @@ void FExampleDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDeb
 	FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
 	//부모에 정의된 함수 콜
 
+	FCanvasTileItem item(FVector2D(10, 10), FVector2D(300, 215), FLinearColor(0, 0, 0, 0.2f));
+	item.BlendMode = ESimpleElementBlendMode::SE_BLEND_AlphaBlend;
+	//DirectX의 Blend 설정
+	CanvasContext.DrawItem(item, CanvasContext.CursorX, CanvasContext.CursorY);
 
-	ACharacter* character = OwnerPC->GetPawn<ACharacter>();
-	//플레이어 캐릭터를 가져옴
-	CanvasContext.Printf(FColor::Yellow, TEXT("Character : %s"), *character->GetActorLocation().ToString());
+	CanvasContext.Printf(FColor::Green, TEXT("  --  Player Pawn  --"));
+	CanvasContext.Printf(FColor::White, TEXT("  Name : %s"), *PlayerPawnData.Name);
+	CanvasContext.Printf(FColor::White, TEXT("  Location : %s"), *PlayerPawnData.Location.ToString());
+	CanvasContext.Printf(FColor::White, TEXT("  Forward : %s"), *PlayerPawnData.Forward.ToString());
 
+	CanvasContext.Printf(FColor::Green, TEXT("  --  Forward Actor  --"));
+	CanvasContext.Printf(FColor::White, TEXT("  Name : %s"), *ForwardActorData.Name);
+	CanvasContext.Printf(FColor::White, TEXT("  Location : %s"), *ForwardActorData.Location.ToString());
+	CanvasContext.Printf(FColor::White, TEXT("  Forward : %s"), *ForwardActorData.Forward.ToString());
 
-	CanvasContext.Printf(FColor::Red, TEXT("Location : %s"), *DebugData.Location.ToString());
-	CanvasContext.Printf(FColor::Green, TEXT("Rotation : %s"), *DebugData.Rotation.ToString());
-	CanvasContext.Printf(FColor::Blue, TEXT("Forward : %s"), *DebugData.Forward.ToString());
-
-}//FColor::Magenta	
+	CanvasContext.Printf(FColor::Green, TEXT("  --  Selected Actor  --"));
+	CanvasContext.Printf(FColor::White, TEXT("  Name : %s"), *SelectedActorData.Name);
+	CanvasContext.Printf(FColor::White, TEXT("  Location : %s"), *SelectedActorData.Location.ToString());
+	CanvasContext.Printf(FColor::White, TEXT("  Forward : %s"), *SelectedActorData.Forward.ToString());
+}
