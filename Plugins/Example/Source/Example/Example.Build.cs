@@ -13,6 +13,8 @@ public class Example : ModuleRules
 
 
         PublicDependencyModuleNames.Add("Core");
+
+
         PublicDependencyModuleNames.Add("CPP_PlugIn");
         //순환참조에 주의하자!! 게임 플러그인 플러그인 게임
 
@@ -25,6 +27,8 @@ public class Example : ModuleRules
         PrivateDependencyModuleNames.Add("EditorStyle");
         PrivateDependencyModuleNames.Add("Projects");
         PrivateDependencyModuleNames.Add("GameplayDebugger");
+        PrivateDependencyModuleNames.Add("DesktopPlatform");           
+        PrivateDependencyModuleNames.Add("MainFrame");          
         //링크 에러 2019, 1120이 뜬다면 이곳에 추가
     }
 }

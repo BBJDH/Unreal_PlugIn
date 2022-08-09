@@ -6,9 +6,11 @@
 #include "StaticMesh_Detail.h"
 #include "CStaticMesh.h"
 
-
 #include "LevelEditor.h"
 #include "GameplayDebugger.h"
+
+#include "CStaticMesh.h"
+#include "StaticMesh_Detail.h"
 
 #define LOCTEXT_NAMESPACE "FExampleModule"
 //다중 국가를 지원하기 위한것
@@ -127,10 +129,19 @@ void FExampleModule::StartupModule()
 	//Detail Pannel
 	{
 		FPropertyEditorModule& prop = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-		prop.RegisterCustomClassLayout
+		//"LevelEditor 불러올때와 동일"
+
+		/*
+		잘 보자 ACStaticMesh는 플러그인이 아닌 게임쪽에 구현되어있다
+		여기서 어떻게 가져다 써야하는가?
+		 => 게임 모듈을 불러오자 (CPP_PlugIn)
+		 하지만 주의해야한다! 플러그인에서 게임모듈을 불러오고 게임모듈에서 깜박하고 플러그인 모듈을 불러온다면
+		 순환참조가 발생한다!
+		*/
+		prop.RegisterCustomClassLayout	//특정 클래스(ACStaticMesh)에 대한 디테일 정보레이아웃을 등록 (FStaticMesh_Detail)
 		(
-			ACStaticMesh::StaticClass()->GetFName(),
-			FOnGetDetailCustomizationInstance::CreateStatic(&FStaticMesh_Detail::MakeInstance)
+			ACStaticMesh::StaticClass()->GetFName(),			//편집하려는 클래스의 이름
+			FOnGetDetailCustomizationInstance::CreateStatic(&FStaticMesh_Detail::MakeInstance)//디테일 레이아웃 생성/반환
 		);
 
 
