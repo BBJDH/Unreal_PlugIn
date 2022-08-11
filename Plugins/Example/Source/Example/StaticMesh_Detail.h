@@ -5,7 +5,9 @@
 #include "IDetailCustomization.h"
 
 /**
-저장하기 위한 구조체 
+저장하기 위한 구조체
+직렬화는 하지 않을 예정
+하지만 바이트 스트림에 전송 가능하도록
  */
 struct FStaticMesh_DetailData
 {
@@ -15,14 +17,22 @@ struct FStaticMesh_DetailData
 	TArray<FColor> Colors;
 	TArray<int32> Indices;
 
+	//부피값 저장
+	FVector Extent;
+	//최대반경 저장
+	float Radius;
+
+
 	friend FArchive& operator<<(FArchive & InArchive, FStaticMesh_DetailData& InData)
 	{
-		return InArchive
-			<< InData.Positions
-			<< InData.Normals
-			<< InData.Uvs
-			<< InData.Colors
-			<< InData.Indices;
+		return InArchive				//받은 아카이브
+			<< InData.Positions			//계속해서
+			<< InData.Normals			//바이트를
+			<< InData.Uvs				//전송
+			<< InData.Colors			//오버로딩
+			<< InData.Indices			//되어 있음
+			<< InData.Extent
+			<< InData.Radius;
 	}
 	//friend를 맺어서 외부에서 접근제한 상관없이 사용가능하게 함
 	//<< 파일스트림 기호 오버로딩

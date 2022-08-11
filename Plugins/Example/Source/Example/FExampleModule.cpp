@@ -77,6 +77,26 @@ void FExampleModule::StartupModule()
 		//싱글톤 접근
 
 
+		//델리게이트 생성, 반환(버튼에 등록될때 시행하는 내용을 바인딩)
+		FToolBarExtensionDelegate toolBar2 = FToolBarExtensionDelegate::CreateRaw
+		(
+			this,
+			&FExampleModule::AddToolBar2
+		);
+
+		//이미 정의된 델리게이트에 함수 바인딩
+
+		Extender->AddToolBarExtension		//툴바 메뉴 추가 함수
+		(
+			"Compile",						//Compile 구역
+			EExtensionHook::Before,			//컴파일 섹션 앞에 삽입(뒤 또는 섹션시작부분 지정가능)
+			FButtonCommand::Get().Command,	// 버튼정보 불러옴(TCommands.Get는 내포하고있는 Weak포인터를 Shared포인터로 Pin()을 통해 캐스팅해서 반환
+			toolBar2							//실행할 델리게이션 바인딩
+		);
+		//지정된 확장점(Compile)에서 도구 모음을 확장합니다. : 툴바에 추가
+		//싱글톤 접근
+
+
 
 		//메뉴추가 델리게이트 생성
 		FMenuExtensionDelegate menu = FMenuExtensionDelegate::CreateRaw
@@ -184,6 +204,22 @@ void FExampleModule::AddToolBar(FToolBarBuilder & InBuilder)
 
 void FExampleModule::AddToolBar2(FToolBarBuilder & InBuilder)
 {
+	//FToolBarBuilder : 툴바생성
+	//levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+	//등록시 실행될 함수(버튼 추가시 해야할 일)
+	//툴바 모양이 어떻게 정의 될지를 여기에 정의
+	InBuilder.AddSeparator();
+	//파티션 추가
+
+	InBuilder.AddToolBarButton
+	(
+		FButtonCommand::Get().Id2,				//커맨드
+		NAME_None,
+		FText::FromString("Viewport"),			//에디터에 나타날 버튼이름
+		FText::FromString("Load Mesh Data"),	//툴팁
+		//TAttribute<FSlateIcon>()				//아이콘 디폴트
+		FExampleStyle::Get()->ToolBar_Icon		//아이콘 우리가 만든거
+	);
 
 }
 
@@ -197,7 +233,7 @@ void FExampleModule::AddMenuItem(FMenuBuilder& InBuilder)
 
 	InBuilder.AddMenuEntry
 	(
-		FButtonCommand::Get().Id,
+		FButtonCommand::Get().Id,				//커맨드
 		NAME_None,
 		FText::FromString("Load Mesh"),			//에디터에 나타날 버튼이름
 		FText::FromString("Load Mesh Data"),	//툴팁

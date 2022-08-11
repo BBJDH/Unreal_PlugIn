@@ -25,7 +25,8 @@ private:
 
 
 public:
-	TSharedPtr<FUICommandInfo> Id;
+	TSharedPtr<FUICommandInfo> Id;		//커맨드
+	TSharedPtr<FUICommandInfo> Id2;		//커맨드
 	//UI에 대한 커맨드, 커맨드 설명, 타입 등 필요 내용을 정의
 
 	TSharedPtr<FUICommandList> Command;

@@ -29,6 +29,7 @@ public class Example : ModuleRules
         PrivateDependencyModuleNames.Add("GameplayDebugger");
         PrivateDependencyModuleNames.Add("DesktopPlatform");           
         PrivateDependencyModuleNames.Add("MainFrame");          
+        PrivateDependencyModuleNames.Add("UnrealEd");   //에디터모듈      
         //링크 에러 2019, 1120이 뜬다면 이곳에 추가
     }
 }
