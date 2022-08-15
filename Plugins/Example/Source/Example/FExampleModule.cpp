@@ -5,6 +5,8 @@
 #include "ExampleDebuggerCategory.h"
 #include "StaticMesh_Detail.h"
 #include "CStaticMesh.h"
+#include "ViewportEditor.h"
+
 
 #include "LevelEditor.h"
 #include "GameplayDebugger.h"
@@ -171,6 +173,9 @@ void FExampleModule::StartupModule()
 
 void FExampleModule::ShutdownModule()
 {
+
+	FViewportEditor::Shutdown();	//에디터 종료시 같이 꺼지도록
+
 	if (IGameplayDebugger::IsAvailable())//디버거 싱글턴이 생성되어 있다면
 		IGameplayDebugger::Get().UnregisterCategory("Example");		//해당 카테고리 제거
 

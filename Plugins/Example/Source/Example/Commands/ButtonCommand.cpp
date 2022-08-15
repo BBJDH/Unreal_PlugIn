@@ -5,6 +5,8 @@
 
 #include "StaticMesh_Detail.h"
 #include "CStaticMesh_Copied.h"
+#include "CViewportObject.h"
+#include "ViewportEditor.h"
 
 #include "IDesktopPlatform.h"
 #include "Interfaces/IMainFrameModule.h"	//언리얼 메인프레임 진입점
@@ -12,7 +14,7 @@
 #include "Serialization/BufferArchive.h"
 #include "LevelEditorViewport.h"
 #include "Misc/FileHelper.h"
-#include "Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"			//UGameplayStatics::FinishSpawningActor
 
 FButtonCommand::FButtonCommand()
 	: TCommands
@@ -201,7 +203,8 @@ void FButtonCommand::OnClicked()
 	//라인트레이스 방향을 가지는 노말벡터를 만든다
 	direction.Normalize();
 
-	FVector location = hitResult.TraceStart + direction * (hitResult.Distance - 100);
+	//카메라 쏜지점으로부터 충돌된지점거리만큼에서 actor의 최대반경을 뺀거리만큼 움직여준다
+	FVector location = hitResult.TraceStart + direction * (hitResult.Distance - data.Radius);
 	transform.SetLocation(location);
 
 
@@ -211,12 +214,13 @@ void FButtonCommand::OnClicked()
 
 
 	//SpawnActorDeferred를 통해 OnConstruction 호출전에 값을 세팅해준다
+	//SpawnActor보다 Deferred를 더욱더 애용해보자
 	ACStaticMesh_Copied* actor = world->SpawnActorDeferred<ACStaticMesh_Copied>
 	(
-		ACStaticMesh_Copied::StaticClass(),									//UClass 타입 리플렉션
+		ACStaticMesh_Copied::StaticClass(),									//UClass 타입 리플렉션, 게임이라면 LoadClass를 통해 에셋을 불러서 사용
 		transform,															//생성 지점
 		nullptr,															//소유자
-		nullptr,															//전파자
+		nullptr,															//전파자(메세지를 전달해주는 대상)
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn	//생성 조건
 	);
 
@@ -227,13 +231,14 @@ void FButtonCommand::OnClicked()
 	actor->SetUvs(data.Uvs);
 	actor->SetColors(data.Colors);
 
-	//SpawnActorDeferred의 세팅후 반드시 FinishSpawningActor로 확정지어줘야 한다
+	//SpawnActorDeferred의 값으 세팅 후 해당 액터, 확정위치로 FinishSpawningActor 콜이 필요하다
+	//actor->FinishSpawning(transform);도 사용해 보자
 	UGameplayStatics::FinishSpawningActor(actor, transform);
 }
 
 void FButtonCommand::OnClicked2()
 {
 	GLog->Log("Viewport");
-	//Editor = MakeShareable(new FExampleEditor());
-	//Editor->OpenEditor(EToolkitMode::Standalone, NewObject<UCExample>());
+	FViewportEditor::OpenWindow(NewObject<UCViewportObject>());
+
 }
