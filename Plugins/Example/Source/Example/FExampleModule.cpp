@@ -3,9 +3,10 @@
 #include "ExampleStyle.h"
 #include "Commands/ButtonCommand.h"
 #include "ExampleDebuggerCategory.h"
+
 #include "StaticMesh_Detail.h"
 #include "CStaticMesh.h"
-#include "ViewportEditor.h"
+#include "MeshViewer.h"
 
 
 #include "LevelEditor.h"
@@ -83,7 +84,7 @@ void FExampleModule::StartupModule()
 		FToolBarExtensionDelegate toolBar2 = FToolBarExtensionDelegate::CreateRaw
 		(
 			this,
-			&FExampleModule::AddToolBar2
+			&FExampleModule::AddToolBar2				//델리게이트에 등록할 함수
 		);
 
 		//이미 정의된 델리게이트에 함수 바인딩
@@ -108,7 +109,7 @@ void FExampleModule::StartupModule()
 		);
 		Extender->AddMenuExtension		//메뉴 추가 함수
 		(
-			"LevelEditor",						//Compile 구역
+			"LevelEditor",						//LevelEditor 구역
 			EExtensionHook::Before,			//컴파일 섹션 앞에 삽입(뒤 또는 섹션시작부분 지정가능)
 			FButtonCommand::Get().Command,	// 버튼정보 불러옴(TCommands.Get는 내포하고있는 Weak포인터를 Shared포인터로 Pin()을 통해 캐스팅해서 반환
 			menu							//실행할 델리게이션 바인딩
@@ -174,7 +175,7 @@ void FExampleModule::StartupModule()
 void FExampleModule::ShutdownModule()
 {
 
-	FViewportEditor::Shutdown();	//에디터 종료시 같이 꺼지도록
+	FMeshViewer::Shutdown();	//에디터 종료시 같이 꺼지도록
 
 	if (IGameplayDebugger::IsAvailable())//디버거 싱글턴이 생성되어 있다면
 		IGameplayDebugger::Get().UnregisterCategory("Example");		//해당 카테고리 제거
@@ -200,7 +201,7 @@ void FExampleModule::AddToolBar(FToolBarBuilder & InBuilder)
 		FButtonCommand::Get().Id,
 		NAME_None,
 		FText::FromString("Load Mesh"),			//에디터에 나타날 버튼이름
-		FText::FromString("Load Mesh Data"),	//툴팁
+		FText::FromString("Tip - Load Mesh Data"),	//툴팁
 		//TAttribute<FSlateIcon>()				//아이콘 디폴트
 		FExampleStyle::Get()->ToolBar_Icon		//아이콘 우리가 만든거
 	);
@@ -213,17 +214,15 @@ void FExampleModule::AddToolBar2(FToolBarBuilder & InBuilder)
 	//levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
 	//등록시 실행될 함수(버튼 추가시 해야할 일)
 	//툴바 모양이 어떻게 정의 될지를 여기에 정의
-	InBuilder.AddSeparator();
-	//파티션 추가
 
 	InBuilder.AddToolBarButton
 	(
 		FButtonCommand::Get().Id2,				//커맨드
 		NAME_None,
-		FText::FromString("Viewport"),			//에디터에 나타날 버튼이름
-		FText::FromString("Load Mesh Data"),	//툴팁
+		FText::FromString("Open Viewer"),			//에디터에 나타날 버튼이름
+		FText::FromString("Tip - Open Viewer"),	//툴팁
 		//TAttribute<FSlateIcon>()				//아이콘 디폴트
-		FExampleStyle::Get()->ToolBar_Icon		//아이콘 우리가 만든거
+		FExampleStyle::Get()->ToolBar_Icon2		//아이콘 우리가 만든거
 	);
 
 }

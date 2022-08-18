@@ -6,7 +6,7 @@
 #include "StaticMesh_Detail.h"
 #include "CStaticMesh_Copied.h"
 #include "CViewportObject.h"
-#include "ViewportEditor.h"
+#include "MeshViewer.h"
 
 #include "IDesktopPlatform.h"
 #include "Interfaces/IMainFrameModule.h"	//언리얼 메인프레임 진입점
@@ -53,9 +53,9 @@ void FButtonCommand::RegisterCommands()
 
 	UI_COMMAND
 	(
-		Id2,									// 명령의 ID(FUICommandInfo)
-		"ViewPort",							// UI에 나타날 커맨드(우리가 쓸 식별자)
-		"Open Viewport",					// 명령에 대한 설명 
+		Id2,								// 명령의 ID(FUICommandInfo)
+		"Viewer",							// UI에 나타날 커맨드(우리가 쓸 식별자)
+		"Open Viewer",						// 명령에 대한 설명 
 		EUserInterfaceActionType::Button,	// 나타나게 할 타입(버튼, 체크박스, 토글버튼 등,
 		FInputChord()						// 단축키 정의(단축키))
 	);
@@ -68,7 +68,7 @@ void FButtonCommand::RegisterCommands()
 		FExecuteAction::CreateRaw		//델리게이트와 동일(Bind가 아닌 Create를 통해 연결, 게임내가 아니므로 UFUNCTION도 선언하지 않음)
 		(
 			this,						//이 클래스인스턴스에 있는
-			&FButtonCommand::OnClicked	//해당함수를 바인딩
+			&FButtonCommand::OnClicked	//눌렀을 때 동작 할 해당함수를 바인딩
 		),
 		FCanExecuteAction()				//버튼이 눌릴 수 있게 설정
 	);
@@ -238,7 +238,6 @@ void FButtonCommand::OnClicked()
 
 void FButtonCommand::OnClicked2()
 {
-	GLog->Log("Viewport");
-	FViewportEditor::OpenWindow(NewObject<UCViewportObject>());
-
+	//GLog->Log("Viewer");
+	FMeshViewer::OpenWindow(NewObject<UCViewportObject>());
 }
