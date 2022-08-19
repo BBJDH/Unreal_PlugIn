@@ -1,6 +1,7 @@
 
 #include "MeshViewer.h"
-
+#include "AdvancedPreviewSceneModule.h"
+#include "SMeshObject_Viewport.h"
 
 const FName FMeshViewer::EditorName = "MeshViewer";
 
@@ -49,7 +50,7 @@ void FMeshViewer::Open(UObject* InAsset)
 	//에디터 모듈 PropertyEditor 가져옴
 
 
-
+	//Spawn_DetailsTab에서 사용될 DetailsView의 파라메터를 결졍해줄 구조체 args 생성
 	FDetailsViewArgs args
 	(
 		false,									//선택할때마다 업데이트 할지
@@ -63,10 +64,11 @@ void FMeshViewer::Open(UObject* InAsset)
 	DetailsView->SetObject(InAsset);				//SetObject해주지 않아도 창은 뜬다
 	//InAsset과 관련된 에셋까지 같이 동기화
 
-	//Viewport = SNew(SPreviewObject_Viewport);
+	//슬래이트 동적할당은 SNew임을 잊지 말자 이 SEditorViewport를 상속받은 상태이다
+	Viewport = SNew(SMeshObject_Viewport);
 
-	//FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");
-	//Preview = scene.CreateAdvancedPreviewSceneSettingsWidget(Viewport->GetPreviewScene());
+	FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");
+	Preview = scene.CreateAdvancedPreviewSceneSettingsWidget(Viewport->GetPreviewScene());
 
 
 	//창 구역을 지정해준다 말그대로 레이아웃 설정!
@@ -164,7 +166,7 @@ void FMeshViewer::UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabMana
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 	//부모함수 콜
 
-
+	//각 탭 생성 함수들 바인딩 해제
 	TabManager->UnregisterTabSpawner(ViewportTabId);
 	TabManager->UnregisterTabSpawner(DetailsTabId);
 	TabManager->UnregisterTabSpawner(PreviewTabId);
@@ -197,21 +199,28 @@ TSharedRef<SDockTab> FMeshViewer::Spawn_ViewportTab(const FSpawnTabArgs& InArgs)
 {
 	return SNew(SDockTab)	//슬레이트 생성
 		[
-			SNew(SButton)
-			.Text(FText::FromString("TEst"))
+			//[] 안이 컨텐츠 구성하는 문법이다
+			//SNew(SButton)
+			//.Text(FText::FromString("TEst"))
 			//SNew(STextBlock)
 			//.Text(FText::FromString("ViewPortTab"))
-			//Viewport.ToSharedRef()
+			Viewport.ToSharedRef()		//위에서 args로 생성했던 디테일뷰 창
 		];
 }
 
 TSharedRef<SDockTab> FMeshViewer::Spawn_DetailsTab(const FSpawnTabArgs& InArgs)
 {
-	return SNew(SDockTab);
+	return SNew(SDockTab)
+		[
+			DetailsView.ToSharedRef()
+		];
 
 }
 
 TSharedRef<SDockTab> FMeshViewer::Spawn_PreviewTab(const FSpawnTabArgs& InArgs)
 {
-	return SNew(SDockTab);
+	return SNew(SDockTab)
+		[
+			Preview.ToSharedRef()
+		];
 }

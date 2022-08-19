@@ -46,7 +46,7 @@ private:
 
 private:
 	TSharedPtr<class IDetailsView> DetailsView;				//디테일뷰 창(오른쪽에 뜨던거)
-	TSharedPtr<class SPreviewObject_Viewport> Viewport;
+	TSharedPtr<class SMeshObject_Viewport> Viewport;
 	TSharedPtr<class SWidget> Preview;
 
 private:

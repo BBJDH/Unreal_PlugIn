@@ -30,6 +30,8 @@ public class Example : ModuleRules
         PrivateDependencyModuleNames.Add("DesktopPlatform");           
         PrivateDependencyModuleNames.Add("MainFrame");          
         PrivateDependencyModuleNames.Add("UnrealEd");   //에디터모듈      
+        PrivateDependencyModuleNames.Add("AdvancedPreviewScene");   
+        PrivateDependencyModuleNames.Add("InputCore");   
         //링크 에러 2019, 1120이 뜬다면 이곳에 추가
     }
 }
