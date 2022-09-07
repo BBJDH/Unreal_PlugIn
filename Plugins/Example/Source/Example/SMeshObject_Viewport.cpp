@@ -13,14 +13,13 @@ SMeshObject_Viewport::SMeshObject_Viewport()
 
 
 //실제 UI를 생성해줄 함수
-
-
-
 void SMeshObject_Viewport::Construct(const FArguments& InArgs)
 {
 	SEditorViewport::Construct(SEditorViewport::FArguments());
 	//부모 함수 콜
 
+
+	//Viewport 안에서도 이렇게 구획을 지정하여 출력 가능
 	ViewportOverlay->AddSlot()
 		.VAlign(VAlign_Top)
 		.HAlign(HAlign_Left)
@@ -36,10 +35,10 @@ void SMeshObject_Viewport::Construct(const FArguments& InArgs)
 			SNew(STextBlock)
 			.Text(FText::FromString("Viewport"))
 		.TextStyle(FEditorStyle::Get(), "TextBlock.ShadowText")
-		.ColorAndOpacity(FLinearColor::Blue)
+		.ColorAndOpacity(FLinearColor::Blue)	//파란색 TextBlock 형성, Viewport라고 왼쪽 상단에 출력
 		];
 
-
+	//Scene에 바닥 깔아줄 floormesh 생성
 	UStaticMesh* floormesh = LoadObject<UStaticMesh>
 		(
 			nullptr,											//Outer, Unreal C++책 참고
@@ -61,13 +60,13 @@ void SMeshObject_Viewport::Construct(const FArguments& InArgs)
 	Scene->AddComponent(FloorMesh, transform);
 
 
-	//화면에 출력할 StaticMesh 불러옴
+	//화면에 출력할 StaticMesh 불러옴 카메라모양
 	UStaticMesh* mesh = LoadObject<UStaticMesh>
 		(
 			nullptr,											//Outer, Unreal C++책 참고
 			TEXT("StaticMesh'/Game/MatineeCam_SM.MatineeCam_SM'")
 		);
-	//MaterialInstanceConstant'/Game/M_StaticMesh_Inst.M_StaticMesh_Inst'
+	//칠해줄 마테리얼 로드
 	UMaterialInstanceConstant* material = LoadObject<UMaterialInstanceConstant>
 		(
 			nullptr,											//Outer

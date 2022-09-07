@@ -65,7 +65,7 @@ void FMeshViewer::Open(UObject* InAsset)
 	//InAsset과 관련된 에셋까지 같이 동기화
 
 	//슬래이트 동적할당은 SNew임을 잊지 말자 이 SEditorViewport를 상속받은 상태이다
-	Viewport = SNew(SMeshObject_Viewport);
+	Viewport = SNew(SMeshObject_Viewport);	//새롭게 만든 Scene
 
 	FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");	//AdvancedPreviewScene 씬영역 이름(모듈이름)
 	Preview = scene.CreateAdvancedPreviewSceneSettingsWidget(Viewport->GetPreviewScene());
