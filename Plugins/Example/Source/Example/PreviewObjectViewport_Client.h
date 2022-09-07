@@ -5,7 +5,8 @@
 #include "EditorViewportClient.h"
 
 /**
- * 
+ViewPort Clint
+에디터에서 보여줄 Scene 을 출력할 카메라 정의
  */
 class EXAMPLE_API FPreviewObjectViewport_Client
 	: public FEditorViewportClient
@@ -14,8 +15,8 @@ class EXAMPLE_API FPreviewObjectViewport_Client
 public:
 	FPreviewObjectViewport_Client
 	(
-		class FPreviewScene* InPreviewScene,
-		const TSharedRef<class SMeshObject_Viewport>& InViewport
+		class FPreviewScene* InPreviewScene,						//Scene 객체(잘 사용되지 않음)
+		const TSharedRef<class SMeshObject_Viewport>& InViewport	//ViewPort
 	);
 	~FPreviewObjectViewport_Client();
 

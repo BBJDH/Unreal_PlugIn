@@ -67,7 +67,7 @@ void FMeshViewer::Open(UObject* InAsset)
 	//슬래이트 동적할당은 SNew임을 잊지 말자 이 SEditorViewport를 상속받은 상태이다
 	Viewport = SNew(SMeshObject_Viewport);
 
-	FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");
+	FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");	//AdvancedPreviewScene 씬영역 이름(모듈이름)
 	Preview = scene.CreateAdvancedPreviewSceneSettingsWidget(Viewport->GetPreviewScene());
 
 
@@ -144,7 +144,7 @@ void FMeshViewer::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManage
 	//CreateSP가 This 콜을 하고있다
 	FOnSpawnTab tab = FOnSpawnTab::CreateSP(this, &FMeshViewer::Spawn_ViewportTab);
 	TabManager->RegisterTabSpawner(ViewportTabId, tab)
-		.SetGroup(WorkspaceMenuCategory.ToSharedRef());	
+	/*	.SetGroup(WorkspaceMenuCategory.ToSharedRef())*/;	
 	//슬래이트 공간 구성 바인딩
 
 	FOnSpawnTab tab2 = FOnSpawnTab::CreateSP(this, &FMeshViewer::Spawn_DetailsTab);
@@ -171,8 +171,6 @@ void FMeshViewer::UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabMana
 	TabManager->UnregisterTabSpawner(DetailsTabId);
 	TabManager->UnregisterTabSpawner(PreviewTabId);
 }
-
-
 
 
 FName FMeshViewer::GetToolkitFName() const
@@ -214,7 +212,6 @@ TSharedRef<SDockTab> FMeshViewer::Spawn_DetailsTab(const FSpawnTabArgs& InArgs)
 		[
 			DetailsView.ToSharedRef()
 		];
-
 }
 
 TSharedRef<SDockTab> FMeshViewer::Spawn_PreviewTab(const FSpawnTabArgs& InArgs)
